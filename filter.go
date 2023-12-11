@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"reflect"
+	"slices"
 	"strconv"
 	"strings"
 	"time"
@@ -84,7 +85,7 @@ func isNotNull(f *Filter) bool {
 
 // rawKey - url key
 // value - must be one value (if need IN method then values must be separated by comma (,))
-func (q *Query) newFilter(rawKey string, value string, delimiter string, validations Validations, qdbm QueryDatabaseMap, allowedNonDatabseFields map[string]NonDatabaseField) (*Filter, error) {
+func (q *Query) newFilter(rawKey string, value string, delimiter string) (*Filter, error) {
 	f := &Filter{
 		Key: rawKey,
 	}
@@ -95,7 +96,7 @@ func (q *Query) newFilter(rawKey string, value string, delimiter string, validat
 	}
 
 	// detect have we validator func definition on this parameter or not
-	validate, _ := detectValidation(f.QueryName, validations)
+	validate, _ := detectValidation(f.QueryName, q.validations)
 	// if !ok {
 	// 	return nil, ErrValidationNotFound
 	// }
@@ -186,7 +187,7 @@ func (f *Filter) parseValue(valueType FieldType, value string, delimiter string)
 
 	var list []string
 
-	if strings.Contains(value, delimiter) {
+	if strings.Contains(value, delimiter) && slices.Contains([]string{FieldTypeStringArray, FieldTypeIntArray, FieldTypeFloatArray}, string(valueType)) {
 		list = strings.Split(value, delimiter)
 	} else {
 		list = append(list, value)
