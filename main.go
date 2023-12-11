@@ -754,7 +754,7 @@ func (q *Query) parseFilter(key, value string) error {
 				return errors.Wrap(ErrEmptyValue, key)
 			}
 
-			filter, err := q.newFilter(key, v, q.delimiterIN, q.validations, q.queryDbFieldMap, q.allowedNonDatabseFields)
+			filter, err := q.newFilter(key, v, q.delimiterIN)
 
 			if err != nil {
 				if err == ErrValidationNotFound {
@@ -780,7 +780,7 @@ func (q *Query) parseFilter(key, value string) error {
 			f = filter
 		}
 	} else { // Single filter
-		filter, err := q.newFilter(key, value, q.delimiterIN, q.validations, q.queryDbFieldMap, q.allowedNonDatabseFields)
+		filter, err := q.newFilter(key, value, q.delimiterIN)
 		if err != nil {
 			if err == ErrValidationNotFound {
 				_, isAllowed := q.allowedNonDatabseFields[filter.QueryName]
