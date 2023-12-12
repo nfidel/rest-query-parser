@@ -187,7 +187,8 @@ func (f *Filter) parseValue(valueType FieldType, value string, delimiter string)
 
 	var list []string
 
-	if strings.Contains(value, delimiter) && slices.Contains([]string{FieldTypeStringArray, FieldTypeIntArray, FieldTypeFloatArray}, string(valueType)) {
+	canBeMany := slices.Contains([]string{FieldTypeStringArray, FieldTypeIntArray, FieldTypeFloatArray}, string(valueType)) || f.Method == IN || f.Method == NIN
+	if strings.Contains(value, delimiter) && canBeMany {
 		list = strings.Split(value, delimiter)
 	} else {
 		list = append(list, value)
